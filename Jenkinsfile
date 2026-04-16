@@ -16,7 +16,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/CloudTechDevOps/Java-springboot-project.git'
+                    url: 'https://github.com/UmmeHani-git/java-springboot-project.git'
             }
         }
 
@@ -42,11 +42,12 @@ pipeline {
                         ssh -i \$SSH_KEY -o StrictHostKeyChecking=no \${EC2_USER_HOST} '
                             pkill -f "${JAR_NAME}" || true
                             sleep 2
+
                             nohup env \\
                               MYSQL_HOST=${RDS_HOST} \\
                               MYSQL_PORT=${RDS_PORT} \\
                               MYSQL_USERNAME=${RDS_USER} \\
-                              MYSQL_PASSWORD='\$MYSQL_PASSWORD' \\
+                              MYSQL_PASSWORD="${MYSQL_PASSWORD}" \\
                               java -jar /home/ec2-user/${JAR_NAME} \\
                               --server.port=${BACKEND_PORT} \\
                               > /home/ec2-user/datastore.log 2>&1 &
@@ -64,10 +65,11 @@ pipeline {
                     sh """
                         ssh -i \$SSH_KEY -o StrictHostKeyChecking=no \${EC2_USER_HOST} '
                             cd /home/ec2-user
+
                             if [ -d "Java-springboot-project" ]; then
                                 cd Java-springboot-project && git pull
                             else
-                                git clone https://github.com/CloudTechDevOps/Java-springboot-project.git
+                                git clone https://github.com/UmmeHani-git/java-springboot-project.git
                                 cd Java-springboot-project
                             fi
 
@@ -75,8 +77,10 @@ pipeline {
                             sleep 2
 
                             cd frontend
-                            python3 -m venv venv
+
+                            python3 -m venv venv || true
                             source venv/bin/activate
+
                             pip install -r requirements.txt -q
 
                             nohup streamlit run app.py \\
@@ -91,7 +95,9 @@ pipeline {
 
     post {
         success {
-            echo "App is live! http://<YOUR_EC2_PUBLIC_IP>:8501"
+            echo "App is live!"
+            echo "Frontend: http://54.160.208.75:8501"
+            echo "Backend:  http://54.160.208.75:8084"
         }
         failure {
             echo "Pipeline failed. Check logs above."
