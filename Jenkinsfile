@@ -38,20 +38,19 @@ pipeline {
                         scp -i \$SSH_KEY -o StrictHostKeyChecking=no \\
                             backend/target/${JAR_NAME} \\
                             \${EC2_USER_HOST}:/home/ec2-user/
+                          ssh -i $SSH_KEY -o StrictHostKeyChecking=no ${EC2_USER_HOST} '
+                           sudo pkill -f "datastore-0.0.7.jar" || true
+                           sleep 2
 
-                        ssh -i \$SSH_KEY -o StrictHostKeyChecking=no \${EC2_USER_HOST} '
-                            pkill -f "${JAR_NAME}" || true
-                            sleep 2
-
-                            nohup env \\
-                              MYSQL_HOST=${RDS_HOST} \\
-                              MYSQL_PORT=${RDS_PORT} \\
-                              MYSQL_USERNAME=${RDS_USER} \\
-                              MYSQL_PASSWORD="${MYSQL_PASSWORD}" \\
-                              java -jar /home/ec2-user/${JAR_NAME} \\
-                              --server.port=${BACKEND_PORT} \\
-                              > /home/ec2-user/datastore.log 2>&1 &
-                        '
+                           nohup env \
+                           MYSQL_HOST=... \
+                           MYSQL_PORT=3306 \
+                           MYSQL_USERNAME=admin \
+                           MYSQL_PASSWORD="$MYSQL_PASSWORD" \
+                           java -jar /home/ec2-user/datastore-0.0.7.jar \
+                          --server.port=8084 \
+                            > /home/ec2-user/datastore.log 2>&1 &
+                      '
                     """
                 }
             }
