@@ -1,6 +1,6 @@
 mvn clean package -Dspring.profiles.active=build
 
-move jara file into /root director
+move jara file into /root directory
 
 MYSQL_HOST=jdbc:database-1.can0ws8oqjny.us-east-1.rds.amazonaws.com:3306/datastore?createDatabaseIfNotExist=true \
 MYSQL_USERNAME=admin \
