@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        EC2_USER_HOST = 'ec2-user@<YOUR_EC2_PUBLIC_IP>'
+        EC2_USER_HOST = 'ec2-user@54.160.208.75'
         BACKEND_PORT  = '8084'
         FRONTEND_PORT = '8501'
         RDS_HOST      = 'database-1.cxeakuo04ry1.us-east-1.rds.amazonaws.com'
